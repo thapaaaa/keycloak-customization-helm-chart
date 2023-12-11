@@ -9,17 +9,52 @@ postgresql:
   auth:
     password: test
     postgresPassword: test
-
-extraVolumes: |
-  - name: realm-secret
-    secret:
-      secretName: realm-secret
-
-extraVolumeMounts: |
-  - name: realm-secret
-    mountPath: "/realm/"
-    readOnly: true
-
-extraEnv: |
-  - name: KEYCLOAK_IMPORT
-    value: /realm/realm.json
+keycloakConfigCli:
+  enabled: true
+  configuration: 
+    realm1.json: |
+      {
+        "realm": "realm-test1",
+        "enabled": "true",
+        "roles": {
+            "realm": [
+              {  
+                "name": "user",
+                "composite": false,
+                "clientRole": false
+              },
+              {
+                "name": "admin",
+                "composite": false,
+                "clientRole": false
+              }
+          ]
+        },
+        "users": [
+            {
+              "username": "realm-test-user1",
+              "enabled": true,
+              "realmRoles": [
+                "user"
+              ],
+              "credentials": [
+                {
+                  "type": "password",
+                  "value": "test"
+                }
+              ]
+            }
+        ],
+        clients: [
+          {
+            "clientId": "client-test",
+            "enabled": "true",
+            "directAccessGrantsEnabled": true,
+            "redirectUris": [""],
+            "webOrigins": [""],
+            "bearerOnly": false,
+            "rootUrl": "http://localhost:3000",
+            "adminUrl": "http://localhost:3000"
+          }
+        ]
+      }
